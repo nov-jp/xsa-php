@@ -14,25 +14,25 @@ ExStyle PHP は、PHP に組み込める、HTMLコード内 の ExStyleプロパ
 ## 一般的な使用例
 
 ```PHP
-&lt;?php
+<?php
 ob_start();
-?&gt;
-&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-  &lt;head&gt;
-    &lt;meta charset=&quot;utf-8&quot; /&gt;
-    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot; /&gt;
+?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     …
-    &lt;!--ExStyle--&gt;
+    <!--ExStyle-->
     …
-  &lt;/head&gt;
-  &lt;body&gt;
+  </head>
+  <body>
     …
-    &lt;p style=&quot;--background--: var(--indigo-6); --color--: var(--gray-0) --padding-block--: var(--size-2); --padding-inline--: var(--size-3);&quot;&gt; &hellip; &lt;/p&gt;
+    <p style="--background--: var(--indigo-6); --color--: var(--gray-0) --padding-block--: var(--size-2); --padding-inline--: var(--size-3);"> &hellip; </p>
     …
-  &lt;/body&gt;
-&lt;/html&gt;
-&lt;?php
+  </body>
+</html>
+<?php
 // HTMLコード を取得します。
 $html = ob_get_clean();
 
@@ -43,11 +43,11 @@ require_once __DIR__ . '/path/to/ExStyle.php';
 $exstyle = new ExStyle();
 
 // CSSコード を生成します。
-$css = $exstyle-&gt;generate( $html );
+$css = $exstyle->generate( $html );
 
 if ( ! empty( $exstyle_css ) ) {
   // head要素内 のコメントを style要素 に置換します。
-  $html = str_replace( '&lt;!--ExStyle--&gt;', &quot;&lt;style&gt;{ $css }&lt;/style&gt;&quot;, $html );
+  $html = str_replace( '<!--ExStyle-->', "<style>{ $css }</style>", $html );
 }
 
 // 最後に出力します。
@@ -63,7 +63,7 @@ echo $html;
 ```functions.php
 // head要素内 に style要素 の埋め込み場所を設置する。
 add_action( 'wp_head', function() {
-  echo '&lt;!--ExStyle--&gt;';
+  echo '<!--ExStyle-->';
 }, 0 );
 
 // バッファリングで出力直前の HTMLコード を取得する。
@@ -75,7 +75,7 @@ add_action( 'init', function() {
 
     // 入れ子になったバッファへの対策と HTMLコード の取得
     $level = ob_get_level();
-    for ( $i = 0; $i &lt; $level; $i++ ) {
+    for ( $i = 0; $i < $level; $i++ ) {
       $html .= ob_get_clean();
     }
 
@@ -92,11 +92,11 @@ add_filter( 'html_before_shutdown', function( $html ) {
   $exstyle = new ExStyle();
 
   // CSSコード を生成します。
-  $css = $exstyle-&gt;generate( $html );
+  $css = $exstyle->generate( $html );
 
   if ( ! empty( $exstyle_css ) ) {
     // head要素内 のコメントを style要素 に置換します。
-    $html = str_replace( '&lt;!--ExStyle--&gt;', &quot;&lt;style&gt;{ $css }&lt;/style&gt;&quot;, $html );
+    $html = str_replace( '<!--ExStyle-->', "<style>{ $css }</style>", $html );
   }
 
   return $html;
@@ -115,7 +115,7 @@ add_filter( 'the_content', function( $content ) {
   $exstyle = new ExStyle();
 
   // CSSコード を生成します。
-  $css = $exstyle-&gt;generate( $content );
+  $css = $exstyle->generate( $content );
 
   // wp_register_style() で CSSコード を登録します。
   if ( ! empty( $css ) ) {

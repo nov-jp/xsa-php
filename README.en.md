@@ -16,25 +16,25 @@ ExStyle PHP is a helper class that can be integrated into PHP environments to co
 ## General Usage Example
 
 ```PHP
-&lt;?php
+<?php
 ob_start();
-?&gt;
-&lt;!DOCTYPE html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-  &lt;head&gt;
-    &lt;meta charset=&quot;utf-8&quot; /&gt;
-    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot; /&gt;
+?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     …
-    &lt;!--ExStyle--&gt;
+    <!--ExStyle-->
     …
-  &lt;/head&gt;
-  &lt;body&gt;
+  </head>
+  <body>
     …
-    &lt;p style=&quot;--background--: var(--indigo-6); --color--: var(--gray-0) --padding-block--: var(--size-2); --padding-inline--: var(--size-3);&quot;&gt; … &lt;/p&gt;
+    <p style="--background--: var(--indigo-6); --color--: var(--gray-0) --padding-block--: var(--size-2); --padding-inline--: var(--size-3);"> … </p>
     …
-  &lt;/body&gt;
-&lt;/html&gt;
-&lt;?php
+  </body>
+</html>
+<?php
 // Capture the HTML code.
 $html = ob_get_clean();
 
@@ -45,11 +45,11 @@ require_once __DIR__ . '/path/to/ExStyle.php';
 $exstyle = new ExStyle();
 
 // Generate the CSS code.
-$css = $exstyle-&gt;generate( $html );
+$css = $exstyle->generate( $html );
 
 if ( ! empty( $css ) ) {
   // Replace the comment in the head element with the style element.
-  $html = str_replace( '&lt;!--ExStyle--&gt;', &quot;&lt;style&gt;{ $css }&lt;/style&gt;&quot;, $html );
+  $html = str_replace( '<!--ExStyle-->', "<style>{ $css }</style>", $html );
 }
 
 // Final output.
@@ -65,7 +65,7 @@ Add the following code to your theme's `functions.php`.
 ```PHP
 // Place a placeholder for the style element within the head element.
 add_action( 'wp_head', function() {
-  echo '&lt;!--ExStyle--&gt;';
+  echo '<!--ExStyle-->';
 }, 0 );
 
 // Use buffering to capture the HTML code immediately before output.
@@ -77,7 +77,7 @@ add_action( 'init', function() {
 
     // Handle nested buffers and capture the HTML code.
     $level = ob_get_level();
-    for ( $i = 0; $i &lt; $level; $i++ ) {
+    for ( $i = 0; $i < $level; $i++ ) {
       $html .= ob_get_clean();
     }
 
@@ -94,11 +94,11 @@ add_filter( 'html_before_shutdown', function( $html ) {
   $exstyle = new ExStyle();
 
   // Generate the CSS code.
-  $css = $exstyle-&gt;generate( $html );
+  $css = $exstyle->generate( $html );
 
   if ( ! empty( $css ) ) {
     // Replace the placeholder comment with the actual style element.
-    $html = str_replace( '&lt;!--ExStyle--&gt;', &quot;&lt;style&gt;{ $css }&lt;/style&gt;&quot;, $html );
+    $html = str_replace( '<!--ExStyle-->', "<style>{ $css }</style>", $html );
   }
 
   return $html;
@@ -117,7 +117,7 @@ add_filter( 'the_content', function( $content ) {
   $exstyle = new ExStyle();
 
   // Generate the CSS code.
-  $css = $exstyle-&gt;generate( $content );
+  $css = $exstyle->generate( $content );
 
   // Register the CSS code via wp_register_style().
   if ( ! empty( $css ) ) {
