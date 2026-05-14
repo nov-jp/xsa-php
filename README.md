@@ -28,7 +28,7 @@ ob_start();
   </head>
   <body>
     …
-    <p style="--background--: var(--indigo-6); --color--: var(--gray-0) --padding-block--: var(--size-2); --padding-inline--: var(--size-3);"> &hellip; </p>
+    <p style="--background--: var(--indigo-6); --color--: var(--gray-0) --padding-block--: var(--size-2); --padding-inline--: var(--size-3);"> … </p>
     …
   </body>
 </html>
