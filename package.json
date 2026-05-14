@@ -1,0 +1,13 @@
+{
+	"name": "@exstyle/php",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "node build-php.mjs"
+	},
+	"keywords": [ "ExStyle", "PHP" ],
+	"author": "Nobuo Nakayama (Shimotsuki/nov-jp)",
+	"license": "MIT",
+	"type": "module"
+}
