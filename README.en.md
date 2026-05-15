@@ -142,6 +142,4 @@ By caching the generated ExStyle CSS using WordPress's [get_transient()](https:/
 
 ---
 
-## License
-
 The MIT License. Copyright 2026 Nobuo Nakayama (Shimotsuki/nov-jp).

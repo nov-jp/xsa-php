@@ -140,6 +140,4 @@ WordPress の [get_transient()](https://developer.wordpress.org/reference/functi
 
 ---
 
-## License
-
 The MIT License. Copyright 2026 Nobuo Nakayama (Shimotsuki/nov-jp).
