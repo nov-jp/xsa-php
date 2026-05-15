@@ -4,12 +4,26 @@
 
 # ExStyle PHP (@exstyle/php)
 
-ExStyle PHP は、PHP に組み込める、HTMLコード内 の ExStyleプロパティ を収集・解析して CSSコード を生成するヘルパークラスです。
+ExStyle PHP は、HTMLコード内 の ExStyleプロパティ を収集・解析して CSSコード を生成する PHP のヘルパークラスです。
 
 ## 特徴
 
 - **高い汎用性**: WordPress を始めとする PHP製 のソフトウェアに組み込めます。
 - **最も合理的**: サーバサイドで動作する ExStyle JS の PHP版 です。必要な CSSコード しか生成せず、データ量・転送量に最も無駄がありません。
+
+## インストール
+
+ダウンロードして任意の場所に配置するか、開発環境を構築している場合は npm や、
+
+```Bash
+npm install @exstyle/php
+```
+
+composer でインストールしてください。
+
+```Bash
+composer require nov-jp/exstyle-php
+```
 
 ## 一般的な使用例
 

@@ -2,11 +2,28 @@
 	"name": "@exstyle/php",
 	"version": "1.0.0",
 	"description": "HTMLコード内 の ExStyleプロパティ を収集・解析して CSSコード の生成を行う PHP のヘルパークラス。",
+	"keywords": [
+		"ExStyle",
+		"PHP",
+		"WordPress"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/nov-jp/exstyle.git",
+		"directory": "packages/php"
+	},
+	"license": "MIT",
+	"author": "Nobuo Nakayama (Shimotsuki/nov-jp)",
+	"type": "module",
+	"files": [
+		"dist",
+		"README.md",
+		"README.en.md"
+	],
 	"scripts": {
 		"build": "node build-php.mjs"
 	},
-	"keywords": [ "ExStyle", "PHP" ],
-	"author": "Nobuo Nakayama (Shimotsuki/nov-jp)",
-	"license": "MIT",
-	"type": "module"
+	"publishConfig": {
+		"access": "public"
+	}
 }

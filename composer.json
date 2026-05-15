@@ -1,0 +1,20 @@
+{
+	"name": "nov-jp/exstyle-php",
+	"description": "HTMLコード内 の ExStyleプロパティ を収集・解析して CSSコード の生成を行う PHP のヘルパークラス。",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Nobuo Nakayama",
+			"email": "webmaster@shimotsuki.wwwxyz.jp"
+		}
+	],
+	"require": {
+		"php": ">=7.4"
+	},
+	"autoload": {
+		"classmap": [
+			"src/"
+		]
+	}
+}
