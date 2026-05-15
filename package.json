@@ -1,8 +1,7 @@
 {
 	"name": "@exstyle/php",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "HTMLコード内 の ExStyleプロパティ を収集・解析して CSSコード の生成を行う PHP のヘルパークラス。",
 	"scripts": {
 		"build": "node build-php.mjs"
 	},
