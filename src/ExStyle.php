@@ -71,7 +71,7 @@ class ExStyle
 	// 解析
 	private function parse( $var_name )
 	{
-		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cq-i-s_hover_c-nth-m2np4-of-p_active_after_content--' => [ 'cq-i-s', 'hover', 'c-nth-m2np4-of-p', 'active', 'after', 'content' ]
+		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cqi-s_hover_c-nth-m2np4-of-p_active_after_content--' => [ 'cq-i-s', 'hover', 'c-nth-m2np4-of-p', 'active', 'after', 'content' ]
 
 		$slot = [
 			'query' => null,
@@ -163,7 +163,7 @@ class ExStyle
 
 		return [
 			'selector' => "[style*=\"{$var_name}:\"]",
-			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover>*:nth-child(-2n+4 of p):active::after{content:var(--cq-i-s_hover_c-nth-m2np4-of-p_active_after_content--);}'
+			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover>*:nth-child(-2n+4 of p):active::after{content:var(--cqi-s_hover_c-nth-m2np4-of-p_active_after_content--);}'
 			'slot'     => $slot,
 		];
 	}

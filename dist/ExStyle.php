@@ -15,7 +15,7 @@ class ExStyle
 	public function __construct()
 	{
 		// メディアクエリ・コンテナクエリ
-		$this->queries = ['cq-i-s' => '@container (inline-size>480px) and (inline-size>30rem)', 'cq-i-m' => '@container (inline-size>720px) and (inline-size>45rem)', 'cq-i-l' => '@container (inline-size>960px) and (inline-size>60rem)', 'cq-i-xl' => '@container (inline-size>1200px) and (inline-size>75rem)', 'mq-w-s' => '@media (width>480px) and (width>30rem)', 'mq-w-m' => '@media (width>720px) and (width>45rem)', 'mq-w-l' => '@media (width>960px) and (width>60rem)', 'mq-w-xl' => '@media (width>1200px) and (width>75rem)'];
+		$this->queries = ['cqb-s' => '@container (block-size>480px) and (block-size>30rem)', 'cqb-m' => '@container (block-size>720px) and (block-size>45rem)', 'cqb-l' => '@container (block-size>960px) and (block-size>60rem)', 'cqb-xl' => '@container (block-size>1200px) and (block-size>75rem)', 'cqi-s' => '@container (inline-size>480px) and (inline-size>30rem)', 'cqi-m' => '@container (inline-size>720px) and (inline-size>45rem)', 'cqi-l' => '@container (inline-size>960px) and (inline-size>60rem)', 'cqi-xl' => '@container (inline-size>1200px) and (inline-size>75rem)', 'vh-s' => '@media (height>480px) and (height>30rem)', 'vh-m' => '@media (height>720px) and (height>45rem)', 'vh-l' => '@media (height>960px) and (height>60rem)', 'vh-xl' => '@media (height>1200px) and (height>75rem)', 'vw-s' => '@media (width>480px) and (width>30rem)', 'vw-m' => '@media (width>720px) and (width>45rem)', 'vw-l' => '@media (width>960px) and (width>60rem)', 'vw-xl' => '@media (width>1200px) and (width>75rem)'];
 
 		// 結合子
 		$this->combinators = ['d' => '& *', 'c3' => '&>*>*>*', 'c2' => '&>*>*', 'c' => '&>*'];
@@ -71,7 +71,7 @@ class ExStyle
 	// 解析
 	private function parse( $var_name )
 	{
-		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cq-i-s_hover_c-nth-m2np4-of-p_active_after_content--' => [ 'cq-i-s', 'hover', 'c-nth-m2np4-of-p', 'active', 'after', 'content' ]
+		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cqi-s_hover_c-nth-m2np4-of-p_active_after_content--' => [ 'cq-i-s', 'hover', 'c-nth-m2np4-of-p', 'active', 'after', 'content' ]
 
 		$slot = [
 			'query' => null,
@@ -163,7 +163,7 @@ class ExStyle
 
 		return [
 			'selector' => "[style*=\"{$var_name}:\"]",
-			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover>*:nth-child(-2n+4 of p):active::after{content:var(--cq-i-s_hover_c-nth-m2np4-of-p_active_after_content--);}'
+			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover>*:nth-child(-2n+4 of p):active::after{content:var(--cqi-s_hover_c-nth-m2np4-of-p_active_after_content--);}'
 			'slot'     => $slot,
 		];
 	}
