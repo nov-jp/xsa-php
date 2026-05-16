@@ -71,7 +71,7 @@ class ExStyle
 	// 解析
 	private function parse( $var_name )
 	{
-		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cq-i-s_hover_d-nth-m2np4-of-p_active_after_content--' => [ 'cq-i-s', 'hover', 'd-nth-m2np4-of-p', 'active', 'after', 'content' ]
+		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cq-i-s_hover_c-nth-m2np4-of-p_active_after_content--' => [ 'cq-i-s', 'hover', 'c-nth-m2np4-of-p', 'active', 'after', 'content' ]
 
 		$slot = [
 			'query' => null,
@@ -88,7 +88,7 @@ class ExStyle
 
 		foreach ( $parts as $part ) {
 			if ( isset( $this->queries[ $part ] ) ) { // '(cq-i|mq-w)-(s|m|l|xl)'
-				$slot[ 'query' ] = $this->queries[ $part ]; // '(@container|@media) …'
+				$slot[ 'query' ] = $this->queries[ $part ]; // '@container …'
 				continue;
 			}
 			if ( isset( $this->descendants[ $part ] ) ) { // '(d|c|c2|c3)(-empty)?'
@@ -96,7 +96,7 @@ class ExStyle
 				$slot[ 'd_val' ] = $this->descendants[ $part ]; // '( *|(>*){1,3})(:empty)?'
 				continue;
 			}
-			if ( isset( $this->descendants[ "{$part}-child" ] ) ) { // '(d|c|c2|c3)(-first|-last|-only)'
+			if ( isset( $this->descendants[ "{$part}-child" ] ) ) { // '(d|c|c2|c3)-(first|last|only)'
 				$slot[ 'd_key' ] = "{$part}-child";
 				$slot[ 'd_val' ] = $this->descendants[ "{$part}-child" ]; // '( *|(>*){1,3}):(first|last|only)-child'
 				continue;
@@ -134,7 +134,7 @@ class ExStyle
 						$n .= " of {$s}"; // '-An+B of S'
 					}
 					$slot[ 'd_key' ] = $nth_part; // 'd-nth-child'
-					$slot[ 'd_val' ] = str_replace( '(n)', "({$n})", $this->descendants[ $nth_part ] ); // ' *:where(:nth-child(n))' => ' *:where(:nth-child(-2n+4 of p))'
+					$slot[ 'd_val' ] = str_replace( '(n)', "({$n})", $this->descendants[ $nth_part ] ); // '>*:where(:nth-child(-2n+4 of p))'
 					continue;
 				}
 			}
@@ -163,7 +163,7 @@ class ExStyle
 
 		return [
 			'selector' => "[style*=\"{$var_name}:\"]",
-			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover *:nth-child(-2n+4 of p):active::after'
+			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover>*:nth-child(-2n+4 of p):active::after{content:var(--cq-i-s_hover_c-nth-m2np4-of-p_active_after_content--);}'
 			'slot'     => $slot,
 		];
 	}
