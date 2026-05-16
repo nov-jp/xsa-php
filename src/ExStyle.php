@@ -71,7 +71,7 @@ class ExStyle
 	// 解析
 	private function parse( $var_name )
 	{
-		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cq-i-s_hover_c-nth-child-m2n-p-4-of-p_action_after_content--' => [ 'cq-i-s', 'hover', 'c-nth-child-m2n-p-4-of-p', 'action', 'after', 'content' ]
+		$parts = explode( '_', trim( $var_name, '-' ) ); // '--cq-i-s_hover_d-nth-m2np4-of-p_active_after_content--' => [ 'cq-i-s', 'hover', 'd-nth-m2np4-of-p', 'active', 'after', 'content' ]
 
 		$slot = [
 			'query' => null,
@@ -87,65 +87,66 @@ class ExStyle
 		];
 
 		foreach ( $parts as $part ) {
-			if ( isset( $this->queries[ $part ] ) ) { // cq-i-s
-				$slot[ 'query' ] = $this->queries[ $part ]; // @container …
+			if ( isset( $this->queries[ $part ] ) ) { // '(cq-i|mq-w)-(s|m|l|xl)'
+				$slot[ 'query' ] = $this->queries[ $part ]; // '(@container|@media) …'
 				continue;
 			}
-			if ( isset( $this->descendants[ $part ] ) ) {
+			if ( isset( $this->descendants[ $part ] ) ) { // '(d|c|c2|c3)(-empty)?'
 				$slot[ 'd_key' ] = $part;
-				$slot[ 'd_val' ] = $this->descendants[ $part ];
+				$slot[ 'd_val' ] = $this->descendants[ $part ]; // '( *|(>*){1,3})(:empty)?'
 				continue;
 			}
-			if ( ( 0 === strpos( $part, 'd' ) || 0 === strpos( $part, 'c' ) ) && false !== strpos( $part, '-' ) ) {
+			if ( isset( $this->descendants[ "{$part}-child" ] ) ) { // '(d|c|c2|c3)(-first|-last|-only)'
+				$slot[ 'd_key' ] = "{$part}-child";
+				$slot[ 'd_val' ] = $this->descendants[ "{$part}-child" ]; // '( *|(>*){1,3}):(first|last|only)-child'
+				continue;
+			}
+			if ( ( false !== strpos( $part, '-nth-' ) || false !== strpos( $part, '-of-' ) ) && false === strpos( $part, '-child-' ) && false === strpos( $part, '-of-type-' ) ) {
 				$nth_part = '';
-				if ( false !== strpos( $part, '-nth-' ) ) {
-					if ( false !== strpos( $part, '-child-' ) ) {
-						$nth_part = substr( $part, 0, strpos( $part, '-child-' ) + 6 ); // '(d|c|c2|c3)-nth(-last)?-child'
-					} elseif ( false !== strpos( $part, '-of-type-' ) ) {
-						$nth_part = substr( $part, 0, strpos( $part, '-of-type-' ) + 8 ); // '(d|c|c2|c3)-nth(-last)?-of-type'
-					}
-				} else {
-					$c = substr( $part, 0, strpos( $part, '-' ) );
-					if ( 0 === strpos( $part, "{$c}-of-" ) ) { // '(d|c|c2|c3)-of'
-						$nth_part = "{$c}-nth-child"; // '(d|c|c2|c3)-nth-child'
-					}
+				$n = 'n';
+				$c = substr( $part, 0, strpos( $part, '-' ) ); // '(d|c|c2|c3)'
+				if ( 0 === strpos( $part, "{$c}-nth-last-" ) ) { // '(d|c|c2|c3)-nth-last-mAnpB(-of-S)?'
+					$nth_part = "{$c}-nth-last-child";
+					$n = substr( $part, strpos( $part, '-last-' ) + 6 ); // 'mAnpB(-of-S)?'
+				} elseif ( 0 === strpos( $part, "{$c}-nth-" ) ) { // '(d|c|c2|c3)-nth-mAnpB(-of-S)?'
+					$nth_part = "{$c}-nth-child";
+					$n = substr( $part, strpos( $part, '-nth-' ) + 5 ); // 'mAnpB(-of-S)?'
+				} elseif ( 0 === strpos( $part, "{$c}-of-" ) ) { // '(d|c|c2|c3)-of-S'
+					$nth_part = "{$c}-nth-child";
 				}
-				if ( isset( $this->descendants[ $nth_part ] ) ) {
-					$n = 'n';
-					$of = '';
-					if ( 0 === strpos( $part, $nth_part ) ) { // '(d|c|c2|c3)-nth(-last)?(-child|-of-type)'
-						$n = substr( $part, strlen( $nth_part ) + 1 ); // 'c-nth-child-m2n-p-4-of-p' => 'm2n-p-4-of-p'
+				if ( '' !== $nth_part && isset( $this->descendants[ $nth_part ] ) ) {
+					if ( 'n' !== $n ) {
 						$pos = strpos( $n, '-of-' );
 						if ( false !== $pos ) {
-							$n = substr( $n, 0, $pos ); // 'm2n-p-4-of-p' => 'm2n-p-4'
+							$n = substr( $n, 0, $pos ); // 'mAnpB-of-S' => 'mAnpB'
 						}
-						$n = str_replace( [ '-', 'm', 'p' ], [ ' ', '-', '+' ], $n ); // 'm2n-p-4' => '-2n + 4'
+						$n = str_replace( [ 'm', 'p' ], [ '-', '+' ], $n ); // 'mAnpB' => '-An+B'
 					}
-					if ( false === strpos( $nth_part, '-of-type' ) ) { // '(d|c|c2|c3)(-nth(-last)?-child|-of)'
-						$of = substr( $part, strpos( $part, '-of-' ) + 4 ); // 'c-nth-child-m2n-p-4-of-p' => 'p'
-						if ( 0 === strpos( $of, 'attr-' ) ) {
-							$of = '[' . substr( $of, 5 ) . ']';
-						} elseif ( 0 === strpos( $of, 'pseudo-' ) ) {
-							$of = ':' . substr( $of, 7 );
-						} elseif ( false !== strpos( $of, '-' ) ) {
-							$of = ':is(' . str_replace( '-', ',', $of ) . ')';
+					if ( false !== strpos( $part, '-of-' ) ) {
+						$s = substr( $part, strpos( $part, '-of-' ) + 4 ); // '(d|c|c2|c3)-(nth(-last)?-mAnpB-of-S|of-S)' => 'S'
+						if ( 0 === strpos( $s, 'attr-' ) ) {
+							$s = '[' . substr( $s, 5 ) . ']'; // 'attr-NAME' => '[NAME]'
+						} elseif ( 0 === strpos( $s, 'pseudo-' ) ) {
+							$s = ':' . substr( $s, 7 ); // 'pseudo-NAME' => ':NAME'
+						} elseif ( false !== strpos( $s, '-' ) ) {
+							$s = ':is(' . str_replace( '-', ',', $s ) . ')'; // 'TYPE-TYPE' => ':is(TYPE,TYPE)'
 						}
-						$n .= " of {$of}";
+						$n .= " of {$s}"; // '-An+B of S'
 					}
-					$slot[ 'd_key' ] = $nth_part; // 'c-nth-child'
-					$slot[ 'd_val' ] = str_replace( '(n)', "({$n})", $this->descendants[ $nth_part ] ); // '>*:where(:nth-child(n))' => '>*:where(:nth-child(-2n + 4 of p))'
+					$slot[ 'd_key' ] = $nth_part; // 'd-nth-child'
+					$slot[ 'd_val' ] = str_replace( '(n)', "({$n})", $this->descendants[ $nth_part ] ); // ' *:where(:nth-child(n))' => ' *:where(:nth-child(-2n+4 of p))'
 					continue;
 				}
 			}
-			if ( isset( $this->p_elements[ $part ] ) ) { // 'after'
+			if ( isset( $this->p_elements[ $part ] ) ) { // '(before|after|…)'
 				$slot[ 'pe_key' ] = $part;
 				$slot[ 'pe_val' ] = $this->p_elements[ $part ]; // '::after'
 				continue;
 			}
-			if ( isset( $this->p_classes[ $part ] ) ) { // 'hover', 'action'
+			if ( isset( $this->p_classes[ $part ] ) ) { // '(hover|active|…)', 
 				if ( $slot[ 'd_key' ] ) {
 					$slot[ 'pc2_key' ] = $part;
-					$slot[ 'pc2_val' ] = $this->p_classes[ $part ]; // ':action'
+					$slot[ 'pc2_val' ] = $this->p_classes[ $part ]; // ':active'
 				} else {
 					$slot[ 'pc1_key' ] = $part;
 					$slot[ 'pc1_val' ] = $this->p_classes[ $part ]; // ':hover'
@@ -162,7 +163,7 @@ class ExStyle
 
 		return [
 			'selector' => "[style*=\"{$var_name}:\"]",
-			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover > *:nth-child(-2n + 4 of p):action::after'
+			'css'      => "&{$slot[ 'pc1_val' ]}{$slot[ 'd_val' ]}{$slot[ 'pc2_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover *:nth-child(-2n+4 of p):active::after'
 			'slot'     => $slot,
 		];
 	}
