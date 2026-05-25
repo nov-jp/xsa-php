@@ -1,19 +1,19 @@
 {
-	"name": "@exstyle/php",
+	"name": "@xsa/php",
 	"version": "1.0.0",
-	"description": "HTMLコード内 の ExStyleプロパティ を収集・解析して CSSコード の生成を行う PHP のヘルパークラス。",
+	"description": "PHP実行環境 で XSAプロパティ から CSSコード を生成するヘルパークラスです。",
 	"keywords": [
-		"ExStyle",
+		"XSA",
 		"PHP",
 		"WordPress"
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/nov-jp/exstyle.git",
+		"url": "git+https://github.com/nov-jp/xsa.git",
 		"directory": "packages/php"
 	},
 	"license": "MIT",
-	"author": "Nobuo Nakayama (Shimotsuki/nov-jp)",
+	"author": "Nobuo Nakayama @ Shimotsuki (https://github.com/nov-jp/)",
 	"type": "module",
 	"files": [
 		"dist",

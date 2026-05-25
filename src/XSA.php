@@ -1,0 +1,344 @@
+<?php /*! The MIT License. Copyright 2026 Nobuo Nakayama @ Shimotsuki (https://github.com/nov-jp/). */
+class XSA
+{
+	private $queries = [];
+	private $combinators = [];
+	private $siblings = [];
+	private $descendants = [];
+	private $p_classes = [];
+	private $p_elements = [];
+	private $properties = [];
+	private $column_style = '';
+	private $layout_style = '';
+	private $text_style = '';
+
+	public function __construct()
+	{
+		// メディアクエリ・コンテナクエリ
+		$this->queries = {{DATA_QUERIES}};
+
+		// 結合子
+		$this->combinators = {{DATA_COMBINATORS}};
+
+		// 兄弟擬似クラス
+		$this->siblings = {{DATA_SIBLINGS}};
+
+		// 子孫要素
+		$d_index = 1;
+		foreach ( $this->combinators as $k => $v ) {
+			$trimmed_v = substr( $v, 1 ); // 先頭の '&' を除去
+			$this->descendants[ $k ] = [ 'val' => $trimmed_v, 'index' => $d_index++ ];
+			foreach ( $this->siblings as $v2 ) {
+				$trimmed_v2 = ( '-child' === substr( $v2, -6 ) ) ? substr( $v2, 0, -6 ) : $v2; // 末尾の '-child' を除去
+				$args = str_contains( $v2, 'nth-' ) ? '(n)' : '';
+				$this->descendants[ "{$k}-{$trimmed_v2}" ] = [ 'val' => "{$trimmed_v}:where(:{$v2}{$args})", 'index' => $d_index++ ];
+			} // foreach
+		} // foreach
+
+		// 擬似クラス
+		$p_classes = {{DATA_PSEUDO_CLASSES}};
+		$pc_patterns = [
+			'S-is-P' => ':where(:S:P)',
+			'S-not-P' => ':where(:S:not(:P))',
+			'S-is-P-s' => ':where(:S:P~*)',
+			'S-not-P-s' => ':where(:S:not(:P)~*)',
+			'S-is-P-n' => ':where(:S:P+*)',
+			'S-not-P-n' => ':where(:S:not(:P)+*)',
+			's-S-is-P' => ':where(:has(~:S:P))',
+			's-S-not-P' => ':where(:has(~:S:not(:P)))',
+			'n-S-is-P' => ':where(:has(+:S:P))',
+			'n-S-not-P' => ':where(:has(+:S:not(:P)))',
+			'd-S-is-P' => ':where(:has(:S:P))',
+			'd-S-not-P' => ':where(:has(:S:not(:P)))',
+			'c-S-is-P' => ':where(:has(>:S:P))',
+			'c-S-not-P' => ':where(:has(>:S:not(:P)))',
+			'c2-S-is-P' => ':where(:has(>*>:S:P))',
+			'c2-S-not-P' => ':where(:has(>*>:S:not(:P)))',
+			'c3-S-is-P' => ':where(:has(>*>*>:S:P))',
+			'c3-S-not-P' => ':where(:has(>*>*>:S:not(:P)))',
+		];
+		$pc_index = 1;
+		$pc_offset = count( $p_classes ) + count( $pc_patterns );
+		foreach ( $pc_patterns as $k => $v ) {
+			foreach ( $p_classes as $v2 ) {
+				$key = str_replace( 'P', $v2, $k );
+				$val = str_replace( 'P', $v2, $v );
+				$index = $pc_index++;
+				$this->p_classes[ str_replace( 'S-', '', $key ) ] = [ 'val' => str_replace( ':S', '', $val ), 'index' => $index ];
+				$this->p_classes[ str_replace( 'S', 'nth', $key ) ] = [ 'val' => str_replace( 'S', 'nth-child(n)', $val ), 'index' => $index ];
+				$this->p_classes[ str_replace( 'S', 'nth-last', $key ) ] = [ 'val' => str_replace( 'S', 'nth-last-child(n)', $val ), 'index' => $index ];
+			}
+		} // foreach
+
+		// 擬似要素
+		$p_elements = {{DATA_PSEUDO_ELEMENTS}};
+		$pe_index = 1;
+		foreach ( $p_elements as $v ) {
+			$this->p_elements[ $v ] = [ 'val' => "::{$v}", 'index' => $pe_index++ ];
+		} // foreach
+
+		// プロパティ
+		$properties = {{DATA_PROPERTIES}};
+		$p_index = 1;
+		foreach ( $properties as $k => $v ) {
+			$this->properties[ $k ] = [ 'val' => $v, 'index' => $p_index++ ];
+		} // foreach
+
+		$this->column_style = {{DATA_COLUMN_STYLE}};
+		$this->layout_style = {{DATA_LAYOUT_STYLE}};
+		$this->text_style = {{DATA_TEXT_STYLE}};
+	}
+
+	// 解析
+	private function parse( $var_name )
+	{
+		$parts = explode( '_', trim( $var_name, '-' ) );
+
+		$slot = [
+			'query' => null,
+			'pc_key' => '',
+			'pc_val' => '',
+			'd_key' => '',
+			'd_val' => '',
+			'dpc_key' => '',
+			'dpc_val' => '',
+			'pe_key' => '',
+			'pe_val' => '',
+			'prop' => array_pop( $parts ), // 'CSS-PROPERTY'
+		];
+
+		foreach ( $parts as $part ) {
+			// '(cq-i|mq-w)-(s|m|l|xl)'
+			if ( isset( $this->queries[ $part ] ) ) {
+				$slot[ 'query' ] = $this->queries[ $part ]; // '(@container|@media) …'
+				continue;
+			}
+
+			// '(d|c|c2|c3)-(first|last|only)?'
+			if ( isset( $this->descendants[ $part ] ) ) {
+				$slot[ 'd_key' ] = $part;
+				$slot[ 'd_val' ] = $this->descendants[ $part ][ 'val' ]; // '( *|(>*){1,3}):where(:(first|last|only)-child)'
+				continue;
+			}
+
+			// 'PSEUDO-ELEMENT'
+			if ( isset( $this->p_elements[ $part ] ) ) {
+				$slot[ 'pe_key' ] = $part;
+				$slot[ 'pe_val' ] = $this->p_elements[ $part ][ 'val' ];
+				continue;
+			}
+
+			// '(d|c|c2|c3)-(nth(-last)?-mAnpB(-of-S)?|of-S)'
+			// '(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS-(n|s)'
+			// '(n|s)-(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS'
+			// '(d|c|c2|c3)-(nth-mAnpB(-of-S)?|of-S)-(is|not)-PSEUDO-CLASS'
+			$nth_part = '';
+			$n = 'n';
+			if ( ! isset( $this->p_classes[ $part ] ) && ! isset( $this->p_classes[ "is-{$part}" ] ) && ! str_contains( $part, '-child-' ) && ! str_contains( $part, '-of-type-' ) ) {
+				$s = ''; // 'name', 'name-name', 'id-name', 'class-name', 'attr-name', 'pseudo-name'
+				$is_descendants = false;
+				$pos_nth = strpos( $part, 'nth-' );
+				$pos_nth_last = strpos( $part, 'nth-last-' );
+				$pos_of = strpos( $part, '-of-' );
+				$pos_func = str_contains( $part, '-is-' ) ? strpos( $part, '-is-' ) : strpos( $part, '-not-' );
+				if ( false !== $pos_func ) {
+					if ( str_ends_with( $part, '-n' ) || str_ends_with( $part, '-s' ) ) { // '(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS-(n|s)'
+						$nth_part = ( false !== $pos_nth_last ? 'nth-last' : 'nth' ) . substr( $part, $pos_func );
+						$s = false !== $pos_of ? substr( $part, $pos_of + 4, $pos_func - $pos_of - 4 ) : substr( $part, 0, $pos_func );
+					} elseif ( str_starts_with( $part, 'n-' ) || str_starts_with( $part, 's-' ) ) { // '(n|s)-(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS'
+						$nth_part = substr( $part, 0, 2 ) . ( false !== $pos_nth_last ? 'nth-last' : 'nth' ) . substr( $part, $pos_func );
+						$s = false !== $pos_of ? substr( $part, $pos_of + 4, $pos_func - $pos_of - 4 ) : substr( $part, 2, $pos_func - 2 );
+					} elseif ( false !== $pos_nth || false !== $pos_of ) { // '(d|c|c2|c3)-(nth-(last-)?mAnpB(-of-S)?|of-S)-(is|not)-PSEUDO-CLASS'
+						if ( false !== $pos_nth_last ) {
+							$nth_part = substr( $part, 0, $pos_nth_last + 8 );
+						} elseif ( false !== $pos_nth ) {
+							$nth_part = substr( $part, 0, $pos_nth + 3 );
+						} else {
+							$nth_part = substr( $part, 0, $pos_of ) . '-nth';
+						}
+						$nth_part .= substr( $part, $pos_func );
+						if ( false !== $pos_of ) {
+							$s = substr( $part, $pos_of + 4, $pos_func - $pos_of - 4 );
+						}
+					}
+					if ( false !== $pos_nth ) {
+						$n = false !== $pos_nth_last ? substr( $part, $pos_nth_last + 9, $pos_of - $pos_nth_last - 9 ) : substr( $part, $pos_nth + 4, $pos_of - $pos_nth - 4 );
+					}
+				} else {
+					$is_descendants = true;
+					if ( false !== $pos_nth_last ) { // '(d|c|c2|c3)-nth-last-mAnpB(-of-S)?'
+						$nth_part = substr( $part, 0, $pos_nth_last + 8 );
+						$n = substr( $part, $pos_nth_last + 9 ); // 'mAnpB(-of-S)?'
+					} else if ( false !== $pos_nth ) { // '(d|c|c2|c3)-nth-mAnpB(-of-S)?'
+						$nth_part = substr( $part, 0, $pos_nth + 3 );
+						$n = substr( $part, $pos_nth + 4 ); // 'mAnpB(-of-S)?'
+					} else if ( false !== $pos_of ) { // '(d|c|c2|c3)-of-S'
+						$nth_part = substr( $part, 0, $pos_of ) . '-nth';
+					}
+					if ( false !== $pos_of ) {
+						$s = substr( $part, $pos_of + 4 );
+					}
+				}
+				if ( 'n' !== $n ) {
+					$pos_of = strpos( $n, '-of-' );
+					if ( false !== $pos_of ) {
+						$n = substr( $n, 0, $pos_of );
+					}
+					$n = str_replace( [ 'M', 'P' ], [ '-', '+' ], $n ); // 'MAnPB' => '-An+B'
+				}
+				if ( '' !== $s && '' === trim( $s, "\x2D\x30..\x39\x41..\x5A\x61..\x7A" ) ) { // [\-0-9A-Za-z]
+					if ( str_starts_with( $s, 'ID-' ) ) {
+						$s = '#' . substr( $s, 3 );
+					} elseif ( str_starts_with( $s, 'CLASS-' ) ) {
+						$s = '.' . substr( $s, 6 );
+					} elseif ( str_starts_with( $s, 'PSEUDO-' ) ) {
+						$s = ':' . substr( $s, 7 );
+					} elseif ( str_starts_with( $s, 'ATTR-' ) ) {
+						$s = substr( $s, 5 );
+						if ( ! str_contains( $s, '-EQ-' ) ) {
+							$s = '[' . $s . ']';
+						} else {
+							$s_parts = explode( '-EQ-', $s );
+							$s_name = $s_parts[ 0 ];
+							$s_op = '';
+							if ( str_ends_with( $s_name, '-A' ) ) { // Asterisk
+								$s_op = '*';
+							} elseif ( str_ends_with( $s_name, '-C' ) ) { // Caret
+								$s_op = '^';
+							} elseif ( str_ends_with( $s_name, '-D' ) ) { // Dollar
+								$s_op = '$';
+							} elseif ( str_ends_with( $s_name, '-T' ) ) { // Tilde
+								$s_op = '~';
+							} elseif ( str_ends_with( $s_name, '-P' ) ) { // Pipe
+								$s_op = '|';
+							}
+							if ( '' !== $s_op ) {
+								$s_name = substr( $s_name, 0, -2 );
+							}
+							$s = '[' . $s_name . $s_op . '="' . $s_parts[ 1 ] . '"]';
+						}
+					} elseif ( str_contains( $s, '-' ) ) {
+						$s = ':is(' . str_replace( '-', ',', $s ) . ')';
+					}
+					$n .= " of {$s}"; // '-An+B of S'
+				}
+				if ( $is_descendants && '' !== $nth_part && isset( $this->descendants[ $nth_part ] ) ) {
+					$slot[ 'd_key' ] = $nth_part;
+					$slot[ 'd_val' ] = str_replace( '(n)', "({$n})", $this->descendants[ $nth_part ][ 'val' ] );
+					continue;
+				}
+			}
+
+			// 'PSEUDO-CLASS'
+			if ( isset( $this->p_classes[ $part ] ) || isset( $this->p_classes[ "is-{$part}" ] ) || ( '' !== $nth_part && isset( $this->p_classes[ $nth_part ] ) ) ) {
+				$prefix = ( '' !== $slot[ 'd_key' ] ) ? 'dpc' : 'pc';
+				$non_nth_part = isset( $this->p_classes[ "is-{$part}" ] ) ? "is-{$part}" : $part;
+				$slot[ "{$prefix}_key" ] = ( '' !== $nth_part ) ? $nth_part : $non_nth_part;
+				$slot[ "{$prefix}_val" ] = ( '' !== $nth_part ) ? str_replace( '(n)', "({$n})", $this->p_classes[ $nth_part ][ 'val' ] ) : $this->p_classes[ $non_nth_part ][ 'val' ];
+				continue;
+			}
+
+			return null;
+		} // foreach
+
+		$body = "{$slot[ 'prop' ]}:var({$var_name});";
+		if ( isset( $this->properties[ $slot[ 'prop' ] ] ) ) {
+			$body = str_replace( [ '/*@prop@*/', '/*@layout_style@*/', '/*@column_style@*/', '/*@text_style@*/' ], [ $var_name, $this->layout_style, $this->column_style, $this->text_style ], $this->properties[ $slot[ 'prop' ] ][ 'val' ] );
+		}
+
+		return [
+			'selector' => "[style*=\"{$var_name}:\"]",
+			'css'      => "&{$slot[ 'pc_val' ]}{$slot[ 'd_val' ]}{$slot[ 'dpc_val' ]}{$slot[ 'pe_val' ]}{{$body}}", // '&:hover>*:nth-child(-2n+4 of p):active::after{content:var(--cqi-s_hover_c-nth-m2np4-of-p_active_after_content--);}'
+			'slot'     => $slot,
+		];
+	}
+
+	// 優先度計算
+	private function get_priority_array( $data )
+	{
+		$slot = $data[ 'slot' ];
+		return [
+			( isset( $this->descendants[ $slot[ 'pc_key' ] ] ) ? $this->p_classes[ $slot[ 'pc_key' ] ][ 'index' ] : 0 ),
+			( isset( $this->descendants[ $slot[ 'd_key' ] ] ) ? $this->descendants[ $slot[ 'd_key' ] ][ 'index' ] : 1e3 ),
+			( isset( $this->descendants[ $slot[ 'dpc_key' ] ] ) ? $this->p_classes[ $slot[ 'dpc_key' ] ][ 'index' ] : 0 ),
+			( isset( $this->descendants[ $slot[ 'pe_key' ] ] ) ? $this->p_elements[ $slot[ 'pe_key' ] ][ 'index' ] : 0 ),
+			( isset( $this->descendants[ $slot[ 'prop' ] ] ) ? $this->properties[ $slot[ 'prop' ] ][ 'index' ] : 1e3 ),
+		];
+	}
+
+	// CSSコード の生成
+	public function generate( $html )
+	{
+		if ( empty( $html ) ) {
+			return '';
+		}
+
+		// すべての style属性値 を取得
+		preg_match_all( '/[\s]style=\"([^\"]+)\"|[\s]style=\'([^\']+)\'/', $html, $matches );
+		$style = ( ! empty( $matches[ 1 ] ) && ! empty( $matches[ 2 ] ) ) ? implode( ' ', array_filter( array_merge( $matches[ 1 ], $matches[ 2 ] ), 'trim' ) ) : '';
+
+		if ( empty( $style ) ) {
+			return '';
+		}
+
+		$map = [];
+
+		// style属性値 から XSAプロパティ を取得
+		preg_match_all( '/(--[a-z0-9-_]+--(?=:))/', $style, $matches );
+
+		if ( empty( $matches[ 1 ] ) ) {
+			return '';
+		}
+
+		foreach ( array_unique( $matches[ 1 ] ) as $var_name ) {
+			$data = $this->parse( $var_name );
+			if ( $data ) {
+				$map[ $var_name ] = $data;
+			}
+		} // foreach
+
+		if ( [] === $map ) {
+			return '';
+		}
+
+		usort( $map, function( $a, $b ) {
+			$array_a = $this->get_priority_array( $a );
+			$array_b = $this->get_priority_array( $b );
+
+			for ( $i = 0; $i < count( $array_a ); $i++ ) {
+				if ( $array_a[ $i ] !== $array_b[ $i ] ) {
+					return $array_a[ $i ] - $array_b[ $i ];
+				}
+			} // for
+
+			if ( strlen( $a[ 'slot' ][ 'prop' ] ) !== strlen( $b[ 'slot' ][ 'prop' ] ) ) {
+				return strlen( $a[ 'slot' ][ 'prop' ] ) - strlen( $b[ 'slot' ][ 'prop' ] );
+			}
+
+			return strcmp( $a[ 'slot' ][ 'prop' ], $b[ 'slot' ][ 'prop' ] );
+		} );
+
+		$output = '';
+		$query_groups = [];
+
+		foreach ( $map as $data ) {
+			$slot = $data[ 'slot' ];
+			if ( empty( $slot[ 'query' ] ) ) {
+				$output .= "{$data[ 'selector' ]}{{$data[ 'css' ]}}\n";
+			} else {
+				if ( ! isset( $query_groups[ $slot[ 'query' ] ] ) ) {
+					$query_groups[ $slot[ 'query' ] ] = '';
+				}
+				$query_groups[ $slot[ 'query' ] ] .= "\t{$data[ 'selector' ]}{{$data[ 'css' ]}}\n";
+			}
+		} // foreach
+
+		foreach ( $this->queries as $query ) {
+			if ( ! empty( $query_groups[ $query ] ) ) {
+				$output .= "{$query}{\n{$query_groups[ $query ]}}\n";
+			}
+		} // foreach
+
+		return $output;
+	}
+}

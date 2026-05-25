@@ -4,8 +4,8 @@ import path from 'path';
 // パスの設定
 const paths = {
 	json: '../core/src/data.json',
-	template: './src/ExStyle.php',
-	output: './dist/ExStyle.php'
+	template: './src/XSA.php',
+	output: './dist/XSA.php'
 };
 
 // JSON データを PHP の配列に変換する関数
@@ -31,12 +31,12 @@ try {
 	// マーカーを置換
 	template = template.replace( '{{DATA_QUERIES}}', toPhpArray( jsonData.queries ) );
 	template = template.replace( '{{DATA_COMBINATORS}}', toPhpArray( jsonData.combinators ) );
-	template = template.replace( '{{DATA_TREE_STRUCTURES}}', toPhpArray( jsonData.tree_structures ) );
+	template = template.replace( '{{DATA_SIBLINGS}}', toPhpArray( jsonData.siblings ) );
 	template = template.replace( '{{DATA_PSEUDO_CLASSES}}', toPhpArray( jsonData.pseudo_classes ) );
 	template = template.replace( '{{DATA_PSEUDO_ELEMENTS}}', toPhpArray( jsonData.pseudo_elements ) );
 	template = template.replace( '{{DATA_PROPERTIES}}', toPhpArray( jsonData.property_styles ) );
-	template = template.replace( '{{DATA_LAYOUT_STYLE}}', toString( jsonData.layout_style ) );
 	template = template.replace( '{{DATA_COLUMN_STYLE}}', toString( jsonData.column_style ) );
+	template = template.replace( '{{DATA_LAYOUT_STYLE}}', toString( jsonData.layout_style ) );
 	template = template.replace( '{{DATA_TEXT_STYLE}}', toString( jsonData.text_style ) );
 
 	// 出力先ディレクトリがなければ作成
@@ -45,7 +45,7 @@ try {
 	}
 
 	fs.writeFileSync( paths.output, template );
-	console.log( 'ExStyle.php has been built successfully!' );
+	console.log( 'XSA.php has been built successfully!' );
 } catch ( err ) {
 	console.error( 'Build failed:', err );
 }

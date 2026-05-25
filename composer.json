@@ -1,6 +1,6 @@
 {
-	"name": "nov-jp/exstyle-php",
-	"description": "HTMLコード内 の ExStyleプロパティ を収集・解析して CSSコード の生成を行う PHP のヘルパークラス。",
+	"name": "nov-jp/xsa-php",
+	"description": "HTMLコード内 の XSAプロパティ を収集・解析して CSSコード の生成を行う PHP のヘルパークラス。",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
