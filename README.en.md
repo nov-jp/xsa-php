@@ -4,7 +4,7 @@ This text was translated from Japanese by Google Gemini.
 
 ---
 
-# XSA PHP (@xsa/php)
+# XSA PHP (@nov-xsa/php)
 
 A helper class that generates CSS code from XSA properties within a PHP environment.
 
@@ -13,7 +13,7 @@ A helper class that generates CSS code from XSA properties within a PHP environm
 If you are using a build tool, you can install it via npm or composer.
 
 ```Bash
-npm install @xsa/php
+npm install @nov-xsa/php
 ```
 
 ```Bash

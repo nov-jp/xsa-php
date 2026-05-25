@@ -2,7 +2,7 @@
 
 ---
 
-# XSA PHP (@xsa/php)
+# XSA PHP (@nov-xsa/php)
 
 PHP実行環境 で XSAプロパティ から CSSコード を生成するヘルパークラスです。
 
@@ -11,7 +11,7 @@ PHP実行環境 で XSAプロパティ から CSSコード を生成するヘル
 ビルドツールなどを使用している場合は npm や composer からインストールできます。
 
 ```Bash
-npm install @xsa/php
+npm install @nov-xsa/php
 ```
 
 ```Bash

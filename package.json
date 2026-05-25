@@ -1,5 +1,5 @@
 {
-	"name": "@xsa/php",
+	"name": "@nov-xsa/php",
 	"version": "1.0.0",
 	"description": "PHP実行環境 で XSAプロパティ から CSSコード を生成するヘルパークラスです。",
 	"keywords": [
