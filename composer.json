@@ -1,6 +1,6 @@
 {
 	"name": "nov-jp/xsa-php",
-	"description": "HTMLコード内 の XSAプロパティ を収集・解析して CSSコード の生成を行う PHP のヘルパークラス。",
+	"description": "PHP実行環境 で XSAプロパティ から CSSコード を生成するヘルパークラスです。",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
