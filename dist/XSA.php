@@ -38,27 +38,27 @@ class XSA
 		// 擬似クラス
 		$p_classes = ['open', 'popover-open', 'modal', 'fullscreen', 'picture-in-picture', 'enabled', 'disabled', 'read-only', 'read-write', 'placeholder-shown', 'autofill', 'default', 'checked', 'indeterminate', 'valid', 'invalid', 'in-range', 'out-of-range', 'required', 'optional', 'user-valid', 'user-invalid', 'any-link', 'link', 'visited', 'target', 'scope', 'playing', 'paused', 'seeking', 'buffering', 'stalled', 'muted', 'volume-locked', 'empty', 'hover', 'active', 'focus', 'focus-visible', 'focus-within', 'target-current'];
 		$pc_patterns = [
-			'S-is-P' => ':where(:S:P)',
-			'S-not-P' => ':where(:S:not(:P))',
-			'S-is-P-s' => ':where(:S:P~*)',
-			'S-not-P-s' => ':where(:S:not(:P)~*)',
-			'S-is-P-n' => ':where(:S:P+*)',
-			'S-not-P-n' => ':where(:S:not(:P)+*)',
-			's-S-is-P' => ':where(:has(~:S:P))',
-			's-S-not-P' => ':where(:has(~:S:not(:P)))',
-			'n-S-is-P' => ':where(:has(+:S:P))',
-			'n-S-not-P' => ':where(:has(+:S:not(:P)))',
-			'd-S-is-P' => ':where(:has(:S:P))',
-			'd-S-not-P' => ':where(:has(:S:not(:P)))',
-			'c-S-is-P' => ':where(:has(>:S:P))',
-			'c-S-not-P' => ':where(:has(>:S:not(:P)))',
-			'c2-S-is-P' => ':where(:has(>*>:S:P))',
-			'c2-S-not-P' => ':where(:has(>*>:S:not(:P)))',
-			'c3-S-is-P' => ':where(:has(>*>*>:S:P))',
-			'c3-S-not-P' => ':where(:has(>*>*>:S:not(:P)))',
+			'S-P' => ':where(:S:P)',
+			'not-S-P' => ':where(:not(:S:P))',
+			'S-P-s' => ':where(:S:P~*)',
+			'not-S-P-s' => ':where(:not(:S:P~*))',
+			'S-P-n' => ':where(:S:P+*)',
+			'not-S-P-n' => ':where(:not(:S:P+*))',
+			's-S-P' => ':where(:has(~:S:P))',
+			'not-s-S-P' => ':where(:not(:has(~:S:P)))',
+			'n-S-P' => ':where(:has(+:S:P))',
+			'not-n-S-P' => ':where(:not(:has(+:S:P)))',
+			'd-S-P' => ':where(:has(:S:P))',
+			'not-d-S-P' => ':where(:not(:has(:S:P)))',
+			'c-S-P' => ':where(:has(>:S:P))',
+			'not-c-S-P' => ':where(:not(:has(>:S:P)))',
+			'c2-S-P' => ':where(:has(>*>:S:P))',
+			'not-c2-S-P' => ':where(:not(:has(>*>:S:P)))',
+			'c3-S-P' => ':where(:has(>*>*>:S:P))',
+			'not-c3-S-P' => ':where(:not(:has(>*>*>:S:P)))',
 		];
-		$pc_index = 1;
 		$pc_offset = count( $p_classes ) + count( $pc_patterns );
+		$pc_index = 1;
 		foreach ( $pc_patterns as $k => $v ) {
 			foreach ( $p_classes as $v2 ) {
 				$key = str_replace( 'P', $v2, $k );
@@ -78,7 +78,7 @@ class XSA
 		} // foreach
 
 		// プロパティ
-		$properties = ['aspect-ratio' => '&{aspect-ratio:var(/*@prop@*/);}:not(_):not(_):where(&:is(iframe)){block-size:auto;}', 'background' => '&{background:var(/*@prop@*/);background-attachment:scroll;}', 'background-attachment' => '&{clip-path:inset(0);}&::before{background:inherit;content:\'\';position:fixed;inset:0;z-index:-1;}&::after{content:none;}', 'columns' => '&{columns:var(/*@prop@*/);}:not(_):not(_):where(&){/*@column_style@*//*@layout_style@*/}', 'column-count' => '&{column-count:var(/*@prop@*/);}:not(_):not(_):where(&){/*@column_style@*//*@layout_style@*/}', 'column-width' => '&{column-width:var(/*@prop@*/);}:not(_):not(_):where(&){/*@column_style@*//*@layout_style@*/}', 'flex-flow' => '&{flex-flow:var(/*@prop@*/);}:not(_):not(_):where(&){display:flex;/*@layout_style@*/}', 'flex-direction' => '&{flex-direction:var(/*@prop@*/);}:not(_):not(_):where(&){display:flex;/*@layout_style@*/}', 'flex-wrap' => '&{flex-wrap:var(/*@prop@*/);}:not(_):not(_):where(&){display:flex;/*@layout_style@*/}', 'font-size' => '&{font-size:var(/*@prop@*/);}:not(_):not(_):where(&){/*@text_style@*/}', 'font-style' => '&{font-style:var(/*@prop@*/);}:not(_):not(_):where(&){/*@text_style@*/}', 'font-weight' => '&{font-weight:var(/*@prop@*/);}:not(_):not(_):where(&){/*@text_style@*/}', 'grid' => '&{grid:var(/*@prop@*/);}:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'grid-template' => '&{grid-template:var(/*@prop@*/);}:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'grid-template-rows' => '&{grid-template-rows:var(/*@prop@*/);}:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'grid-template-columns' => '&{grid-template-columns:var(/*@prop@*/);}:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'place-content' => '&{place-content:var(/*@prop@*/);}', 'align-content' => '&{align-content:var(/*@prop@*/);}', 'justify-content' => '&{justify-content:var(/*@prop@*/);}', 'place-items' => '&{place-items:var(/*@prop@*/);}', 'align-items' => '&{align-items:var(/*@prop@*/);}', 'justify-items' => '&{justify-items:var(/*@prop@*/);}', 'place-self' => '&{place-self:var(/*@prop@*/);}', 'align-self' => '&{align-self:var(/*@prop@*/);}', 'justify-self' => '&{justify-self:var(/*@prop@*/);}', 'text-decoration' => '&{text-decoration:var(/*@prop@*/);}:not(_):not(_):where(&){/*@text_style@*/}', 'text-emphasis' => '&{text-emphasis:var(/*@prop@*/);}:not(_):not(_):where(&){/*@text_style@*/}', 'text-shadow' => '&{text-shadow:var(/*@prop@*/);}:not(_):not(_):where(&){/*@text_style@*/}', 'text-stroke' => '&{-webkit-text-stroke:var(/*@prop@*/);text-stroke:var(/*@prop@*/);}:not(_):not(_):where(&){paint-order:stroke;/*@text_style@*/}', 'x-text-marker' => '&{text-decoration:underline 50% var(/*@prop@*/);}:not(_):not(_):where(&){text-decoration-skip-ink:none;text-underline-offset:-50%;text-underline-position:under;/*@text_style@*/}'];
+		$properties = ['aspect-ratio' => 'aspect-ratio:var(/*@prop@*/);:not(_):not(_):where(&:is(iframe)){block-size:auto;}', 'background' => 'background:var(/*@prop@*/);background-attachment:scroll;', 'background-attachment' => 'clip-path:inset(0);&::before{background:inherit;content:\'\';position:fixed;inset:0;z-index:-1;}&::after{content:none;}', 'columns' => 'columns:var(/*@prop@*/);:not(_):not(_):where(&){/*@column_style@*//*@layout_style@*/}', 'column-count' => 'column-count:var(/*@prop@*/);:not(_):not(_):where(&){/*@column_style@*//*@layout_style@*/}', 'column-width' => 'column-width:var(/*@prop@*/);:not(_):not(_):where(&){/*@column_style@*//*@layout_style@*/}', 'flex-flow' => 'flex-flow:var(/*@prop@*/);:not(_):not(_):where(&){display:flex;/*@layout_style@*/}', 'flex-direction' => 'flex-direction:var(/*@prop@*/);:not(_):not(_):where(&){display:flex;/*@layout_style@*/}', 'flex-wrap' => 'flex-wrap:var(/*@prop@*/);:not(_):not(_):where(&){display:flex;/*@layout_style@*/}', 'font-size' => 'font-size:var(/*@prop@*/);:not(_):not(_):where(&){/*@text_style@*/}', 'font-style' => 'font-style:var(/*@prop@*/);:not(_):not(_):where(&){/*@text_style@*/}', 'font-weight' => 'font-weight:var(/*@prop@*/);:not(_):not(_):where(&){/*@text_style@*/}', 'grid' => 'grid:var(/*@prop@*/);:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'grid-template' => 'grid-template:var(/*@prop@*/);:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'grid-template-rows' => 'grid-template-rows:var(/*@prop@*/);:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'grid-template-columns' => 'grid-template-columns:var(/*@prop@*/);:not(_):not(_):where(&){display:grid;/*@layout_style@*/}', 'place-content' => 'place-content:var(/*@prop@*/);', 'align-content' => 'align-content:var(/*@prop@*/);', 'justify-content' => 'justify-content:var(/*@prop@*/);', 'place-items' => 'place-items:var(/*@prop@*/);', 'align-items' => 'align-items:var(/*@prop@*/);', 'justify-items' => 'justify-items:var(/*@prop@*/);', 'place-self' => 'place-self:var(/*@prop@*/);', 'align-self' => 'align-self:var(/*@prop@*/);', 'justify-self' => 'justify-self:var(/*@prop@*/);', 'text-decoration' => 'text-decoration:var(/*@prop@*/);:not(_):not(_):where(&){/*@text_style@*/}', 'text-emphasis' => 'text-emphasis:var(/*@prop@*/);:not(_):not(_):where(&){/*@text_style@*/}', 'text-shadow' => 'text-shadow:var(/*@prop@*/);:not(_):not(_):where(&){/*@text_style@*/}', 'text-stroke' => '-webkit-text-stroke:var(/*@prop@*/);text-stroke:var(/*@prop@*/);:not(_):not(_):where(&){paint-order:stroke;/*@text_style@*/}', 'x-text-marker' => 'text-decoration:underline 50% var(/*@prop@*/);:not(_):not(_):where(&){text-decoration-skip-ink:none;text-underline-offset:-50%;text-underline-position:under;/*@text_style@*/}'];
 		$p_index = 1;
 		foreach ( $properties as $k => $v ) {
 			$this->properties[ $k ] = [ 'val' => $v, 'index' => $p_index++ ];
@@ -86,7 +86,7 @@ class XSA
 
 		$this->column_style = '&>*{break-inside:avoid-column;contain:layout;}&>:first-child{margin-block-start:0;}&>:last-child{margin-block-end:0;}';
 		$this->layout_style = '&:where(ol,ul,menu){list-style-position:inside;padding:0;}&:where(ul,menu){list-style-type:\'\';}&:where(dl)>:where(div)>*,&>*,&:where(li,dt,dd){margin:0;}';
-		$this->text_style = '&{background:none;color:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;text-decoration:none;}';
+		$this->text_style = 'background:none;color:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;text-decoration:none;';
 	}
 
 	// 解析
@@ -108,7 +108,7 @@ class XSA
 		];
 
 		foreach ( $parts as $part ) {
-			// '(cq-i|mq-w)-(s|m|l|xl)'
+			// '(cqi|vw)-(s|m|l|xl)'
 			if ( isset( $this->queries[ $part ] ) ) {
 				$slot[ 'query' ] = $this->queries[ $part ]; // '(@container|@media) …'
 				continue;
@@ -121,62 +121,79 @@ class XSA
 				continue;
 			}
 
-			// 'PSEUDO-ELEMENT'
+			// '(before|after|…)'
 			if ( isset( $this->p_elements[ $part ] ) ) {
 				$slot[ 'pe_key' ] = $part;
 				$slot[ 'pe_val' ] = $this->p_elements[ $part ][ 'val' ];
 				continue;
 			}
 
-			// '(d|c|c2|c3)-(nth(-last)?-mAnpB(-of-S)?|of-S)'
-			// '(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS-(n|s)'
-			// '(n|s)-(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS'
-			// '(d|c|c2|c3)-(nth-mAnpB(-of-S)?|of-S)-(is|not)-PSEUDO-CLASS'
+			// '(d|c|c2|c3)-nth-(last-)?MAnPB(-of-S)?'
+			// '(d|c|c2|c3)-of-S'
+			// '(not-)?nth-(last-)?MAnPB(-of-S)?-is-PSEUDO-CLASS-(n|s)'
+			// '(not-)?S-is-PSEUDO-CLASS-(n|s)'
+			// '(not-)?(n|s|d|c|c2|c3)-nth-(last-)?MAnPB(-of-S)?-is-PSEUDO-CLASS'
+			// '(not-)?(n|s)-S-is-PSEUDO-CLASS'
+			// '(not-)?(d|c|c2|c3)-of-S-is-PSEUDO-CLASS'
 			$nth_part = '';
 			$n = 'n';
-			if ( ! isset( $this->p_classes[ $part ] ) && ! isset( $this->p_classes[ "is-{$part}" ] ) && ! str_contains( $part, '-child-' ) && ! str_contains( $part, '-of-type-' ) ) {
-				$s = ''; // 'name', 'name-name', 'id-name', 'class-name', 'attr-name', 'pseudo-name'
+			if ( ! isset( $this->p_classes[ $part ] ) && ! str_contains( $part, '-child-' ) && ! str_contains( $part, '-of-type-' ) ) {
+				$s = ''; // 'name', 'name-name', 'ID-name', 'CLASS-name', 'PSEUDO-name', 'ATTR-name'
 				$is_descendants = false;
 				$pos_nth = strpos( $part, 'nth-' );
 				$pos_nth_last = strpos( $part, 'nth-last-' );
 				$pos_of = strpos( $part, '-of-' );
-				$pos_func = str_contains( $part, '-is-' ) ? strpos( $part, '-is-' ) : strpos( $part, '-not-' );
-				if ( false !== $pos_func ) {
-					if ( str_ends_with( $part, '-n' ) || str_ends_with( $part, '-s' ) ) { // '(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS-(n|s)'
-						$nth_part = ( false !== $pos_nth_last ? 'nth-last' : 'nth' ) . substr( $part, $pos_func );
-						$s = false !== $pos_of ? substr( $part, $pos_of + 4, $pos_func - $pos_of - 4 ) : substr( $part, 0, $pos_func );
-					} elseif ( str_starts_with( $part, 'n-' ) || str_starts_with( $part, 's-' ) ) { // '(n|s)-(nth-mAnpB-of-S|S)-(is|not)-PSEUDO-CLASS'
-						$nth_part = substr( $part, 0, 2 ) . ( false !== $pos_nth_last ? 'nth-last' : 'nth' ) . substr( $part, $pos_func );
-						$s = false !== $pos_of ? substr( $part, $pos_of + 4, $pos_func - $pos_of - 4 ) : substr( $part, 2, $pos_func - 2 );
-					} elseif ( false !== $pos_nth || false !== $pos_of ) { // '(d|c|c2|c3)-(nth-(last-)?mAnpB(-of-S)?|of-S)-(is|not)-PSEUDO-CLASS'
-						if ( false !== $pos_nth_last ) {
-							$nth_part = substr( $part, 0, $pos_nth_last + 8 );
-						} elseif ( false !== $pos_nth ) {
-							$nth_part = substr( $part, 0, $pos_nth + 3 );
-						} else {
-							$nth_part = substr( $part, 0, $pos_of ) . '-nth';
-						}
-						$nth_part .= substr( $part, $pos_func );
-						if ( false !== $pos_of ) {
-							$s = substr( $part, $pos_of + 4, $pos_func - $pos_of - 4 );
-						}
-					}
-					if ( false !== $pos_nth ) {
-						$n = false !== $pos_nth_last ? substr( $part, $pos_nth_last + 9, $pos_of - $pos_nth_last - 9 ) : substr( $part, $pos_nth + 4, $pos_of - $pos_nth - 4 );
-					}
-				} else {
+				$pos_is = strpos( $part, '-is-' );
+				if ( false === $pos_is ) { // '(d|c|c2|c3)-(nth-(last-)?MAnPB(-of-S)?|of-S)'
 					$is_descendants = true;
-					if ( false !== $pos_nth_last ) { // '(d|c|c2|c3)-nth-last-mAnpB(-of-S)?'
-						$nth_part = substr( $part, 0, $pos_nth_last + 8 );
-						$n = substr( $part, $pos_nth_last + 9 ); // 'mAnpB(-of-S)?'
-					} else if ( false !== $pos_nth ) { // '(d|c|c2|c3)-nth-mAnpB(-of-S)?'
-						$nth_part = substr( $part, 0, $pos_nth + 3 );
-						$n = substr( $part, $pos_nth + 4 ); // 'mAnpB(-of-S)?'
+					if ( false !== $pos_nth_last ) { // '(d|c|c2|c3)-nth-last-MAnPB(-of-S)?'
+						$nth_part = substr( $part, 0, $pos_nth_last + 8 ); // '(d|c|c2|c3)-nth-last'
+						$n = substr( $part, $pos_nth_last + 9 ); // 'MAnPB(-of-S)?'
+					} else if ( false !== $pos_nth ) { // '(d|c|c2|c3)-nth-MAnPB(-of-S)?'
+						$nth_part = substr( $part, 0, $pos_nth + 3 ); // '(d|c|c2|c3)-nth'
+						$n = substr( $part, $pos_nth + 4 ); // 'MAnPB(-of-S)?'
 					} else if ( false !== $pos_of ) { // '(d|c|c2|c3)-of-S'
-						$nth_part = substr( $part, 0, $pos_of ) . '-nth';
+						$nth_part = substr( $part, 0, $pos_of ) . '-nth'; // '(d|c|c2|c3)-nth'
 					}
 					if ( false !== $pos_of ) {
-						$s = substr( $part, $pos_of + 4 );
+						$s = substr( $part, $pos_of + 4 ); // 'S'
+					}
+				} else {
+					$has_not = str_starts_with( $part, 'not-' );
+					$start = $has_not ? 4 : 0;
+					$combinator = substr( $part, $start, strpos( $part, '-', $start ) + 1 - $start ); // '(n|s|d|c|c2|c3)-'
+					if ( str_ends_with( $part, '-n' ) || str_ends_with( $part, '-s' ) ) { // '(not-)?(nth-(last-)?MAnPB(-of-S)?|S)-is-PSEUDO-CLASS-(n|s)'
+						$nth_part = ( $has_not ? 'not-' : '' ) . 'nth' . ( false !== $pos_nth_last ? '-last' : '' ) . substr( $part, $pos_is + 3 ); // (not-)?nth(-last)?-PSEUDO-CLASS-(n|s)
+						if ( false !== $pos_of ) {
+							$s = substr( $part, $pos_of + 4, $pos_is - $pos_of - 4 ); // '-of-S-is-'
+						} else if ( false === $pos_nth ) {
+							$s = substr( $part, $start, $pos_is - $start ); // '(not-)?S-is-'
+						}
+					} elseif ( 'n-' === $combinator || 's-' === $combinator ) { // '(not-)?(n|s)-(nth-(last-)?MAnPB(-of-S)?|S)-is-PSEUDO-CLASS'
+						$nth_part = ( $has_not ? 'not-' : '' ) . $combinator . 'nth' . ( false !== $pos_nth_last ? '-last' : '' ) . substr( $part, $pos_is + 3 ); // (not-)?(n|s)-nth(-last)?-PSEUDO-CLASS
+						if ( false !== $pos_of ) {
+							$s = substr( $part, $pos_of + 4, $pos_is - $pos_of - 4 ); // '-of-S-is-'
+						} else if ( false === $pos_nth ) {
+							$s = substr( $part, $start + 2, $pos_is - $start - 2 ); // '(not-)?(n|s)-S-is-'
+						}
+					} elseif ( false !== $pos_nth || false !== $pos_of ) { // '(not-)?(d|c|c2|c3)-(nth-(last-)?MAnPB(-of-S)?|of-S)-is-PSEUDO-CLASS'
+						if ( false !== $pos_nth_last ) {
+							$nth_part = substr( $part, 0, $pos_nth_last + 8 ); // '(not-)?(d|c|c2|c3)-nth-last'
+						} elseif ( false !== $pos_nth ) {
+							$nth_part = substr( $part, 0, $pos_nth + 3 ); // '(not-)?(d|c|c2|c3)-nth'
+						} else {
+							$nth_part = substr( $part, 0, $pos_of ) . '-nth'; // '(not-)?(d|c|c2|c3)-nth'
+						}
+						$nth_part .= substr( $part, $pos_is + 3 ); // '-PSEUDO-CLASS'
+						if ( false !== $pos_of ) { // '-of-S-is-'
+							$s = substr( $part, $pos_of + 4, $pos_is - $pos_of - 4 );
+						}
+					}
+					$len_base = false !== $pos_of ? $pos_of : $pos_is;
+					if ( false !== $pos_nth_last ) {
+						$n = substr( $part, $pos_nth_last + 9, $len_base - $pos_nth_last - 9);
+					} else if ( false !== $pos_nth ) {
+						$n = substr( $part, $pos_nth + 4, $len_base - $pos_nth - 4 );
 					}
 				}
 				if ( 'n' !== $n ) {
@@ -229,12 +246,11 @@ class XSA
 				}
 			}
 
-			// 'PSEUDO-CLASS'
-			if ( isset( $this->p_classes[ $part ] ) || isset( $this->p_classes[ "is-{$part}" ] ) || ( '' !== $nth_part && isset( $this->p_classes[ $nth_part ] ) ) ) {
+			// '((not-)?focus|(not-)?focus(-n|-s)|(not-)?(n-|s-)focus|(not-)?(d|c|c2|c3)-focus|…)'
+			if ( isset( $this->p_classes[ $part ] ) || ( '' !== $nth_part && isset( $this->p_classes[ $nth_part ] ) ) ) {
 				$prefix = ( '' !== $slot[ 'd_key' ] ) ? 'dpc' : 'pc';
-				$non_nth_part = isset( $this->p_classes[ "is-{$part}" ] ) ? "is-{$part}" : $part;
-				$slot[ "{$prefix}_key" ] = ( '' !== $nth_part ) ? $nth_part : $non_nth_part;
-				$slot[ "{$prefix}_val" ] = ( '' !== $nth_part ) ? str_replace( '(n)', "({$n})", $this->p_classes[ $nth_part ][ 'val' ] ) : $this->p_classes[ $non_nth_part ][ 'val' ];
+				$slot[ "{$prefix}_key" ] = ( '' !== $nth_part ) ? $nth_part : $part;
+				$slot[ "{$prefix}_val" ] = ( '' !== $nth_part ) ? str_replace( '(n)', "({$n})", $this->p_classes[ $nth_part ][ 'val' ] ) : $this->p_classes[ $part ][ 'val' ];
 				continue;
 			}
 
@@ -275,22 +291,21 @@ class XSA
 
 		// すべての style属性値 を取得
 		preg_match_all( '/[\s]style=\"([^\"]+)\"|[\s]style=\'([^\']+)\'/', $html, $matches );
-		$style = ( ! empty( $matches[ 1 ] ) && ! empty( $matches[ 2 ] ) ) ? implode( ' ', array_filter( array_merge( $matches[ 1 ], $matches[ 2 ] ), 'trim' ) ) : '';
-
-		if ( empty( $style ) ) {
+		if ( empty( $matches[ 1 ] ) && empty( $matches[ 2 ] ) ) {
 			return '';
 		}
-
-		$map = [];
+		$style = implode( ' ', array_filter( array_merge( $matches[ 1 ], $matches[ 2 ] ), 'trim' ) );
 
 		// style属性値 から XSAプロパティ を取得
-		preg_match_all( '/(--[a-z0-9-_]+--(?=:))/', $style, $matches );
-
+		preg_match_all( '/(--[A-Za-z0-9_\-]+--(?=:))/', $style, $matches );
 		if ( empty( $matches[ 1 ] ) ) {
 			return '';
 		}
+		$props = array_unique( $matches[ 1 ] );
 
-		foreach ( array_unique( $matches[ 1 ] ) as $var_name ) {
+		$map = [];
+
+		foreach ( $props as $var_name ) {
 			$data = $this->parse( $var_name );
 			if ( $data ) {
 				$map[ $var_name ] = $data;
@@ -301,6 +316,7 @@ class XSA
 			return '';
 		}
 
+		// 並べ替え
 		usort( $map, function( $a, $b ) {
 			$array_a = $this->get_priority_array( $a );
 			$array_b = $this->get_priority_array( $b );
